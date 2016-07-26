@@ -10,7 +10,6 @@ import os
 import time
 import telepot
 from peewee import *
-from random import choice
 
 if 'OPENSHIFT_DATA_DIR' in os.environ:
     db = SqliteDatabase(os.environ['OPENSHIFT_DATA_DIR']+'datumaro.db')
@@ -131,15 +130,8 @@ def on_chat_message(msg):
         else:
             r = u'Rebonvenon!'
         bot.sendMessage(chat_id, r)
-    elif m == u'/restart':
+    elif m == u'/rekomenci':
         r = rekomenci(chat_id)
-        bot.sendMessage(chat_id, r)
-    elif m == u'/poz':
-        uzantoX, uzantoY = poz(chat_id)
-        r = str(uzantoX) + ':' + str(uzantoY)
-        bot.sendMessage(chat_id, r)
-    elif m == u'/mono':
-        r = Uzanto.get(Uzanto.uid == chat_id).mono
         bot.sendMessage(chat_id, r)
     elif m == u'/domoj':
         r = ''
