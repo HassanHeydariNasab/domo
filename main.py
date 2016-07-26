@@ -46,6 +46,9 @@ def kreiUrbon(x, y):
             Parto.create(x = i, y = j)
             
 #kreiUrbon(10, 10)
+global maksX
+global maksY
+maksX, maksY = 9, 9
 
 def poz(uzanto_id):
     poz = Parto.select().join(Uzanto).where(Uzanto.uid == uzanto_id).get()
@@ -85,16 +88,19 @@ def mapi(i0, i1, i2):
     mapoVico = ['', '', '']
     for (x, y, i) in (i0, i1, i2):
         domo, uzanto = parto(x, y)
-        mapoVico[i] = x+':'+y
-        if domo != False:
-            mapoVico[i] += '#'+str(domo.nivelo)
-        if uzanto != False:
-            mapoVico[i] += '@'+str(uzanto.nivelo)
+        if int(x) > maksX or int(y) > maksY or int(x) < 0 or int(y) < 0:
+            mapoVico[i] = '*'
+        else:
+            mapoVico[i] = x+':'+y
+            if domo != False:
+                mapoVico[i] += '#'+str(domo.nivelo)
+            if uzanto != False:
+                mapoVico[i] += '@'+str(uzanto.nivelo)
                 
-        if domo != False:
-            mapoVico[i] += '\n'+str(domo.uzanto.uid)
-        elif uzanto != False:
-            mapoVico[i] += '\n'+str(uzanto.uid)
+            if domo != False:
+                mapoVico[i] += '\n'+str(domo.uzanto.uid)
+            elif uzanto != False:
+                mapoVico[i] += '\n'+str(uzanto.uid)
     return mapoVico
 
 def rekomenci(uzanto_id):
@@ -106,11 +112,17 @@ def rekomenci(uzanto_id):
     Domo.delete().where(Domo.uzanto == uzanto).execute()
     uzanto.save()
     return u'Vi renaskiĝis en %s:%s.' % (x, y)
-        
+
+def Tutmapi(uzanto_id):
+    uzantoX, uzantoY = poz(uzanto_id)
+    mapo = [mapi((str(uzantoX-1), str(uzantoY-1), 0), (str(uzantoX), str(uzantoY-1), 1), (str(uzantoX+1), str(uzantoY-1), 2)),
+            mapi((str(uzantoX-1), str(uzantoY)  , 0), (str(uzantoX), str(uzantoY),   1), (str(uzantoX+1), str(uzantoY)  , 2)),
+            mapi((str(uzantoX-1), str(uzantoY+1), 0), (str(uzantoX), str(uzantoY+1), 1), (str(uzantoX+1), str(uzantoY+1), 2))]
+    return mapo
+
 def on_chat_message(msg):
     content_type, chat_type, chat_id = telepot.glance(msg)
     m = msg['text']
-    maksX, maksY = 9, 9
     if m == u'/start':
         liberaPartoId, x, y = liberaParto(chat_id)
         uzanto, uzantoEstasNova = Uzanto.get_or_create(uid = chat_id, defaults = {'mono':80, 'parto':liberaPartoId, 'nivelo':1, 'sano':10})
@@ -145,7 +157,7 @@ def on_chat_message(msg):
             if not domoEstasNova:
                 if uzanto.mono >= (domo.nivelo + 1) * 2:
                     domo.nivelo += 1
-                    domo.sano = int(domo.sano * 1.71828)
+                    domo.sano = int(domo.sano * 1.1)
                     novaNivelo = domo.nivelo
                     domo.save()
                     Uzanto.update(mono = Uzanto.mono - novaNivelo * 2).where(Uzanto.uid == chat_id).execute()
@@ -197,28 +209,26 @@ def on_chat_message(msg):
                 if domo != '':
                     if domo.uzanto.uid != chat_id:
                         domo.sano -= laUzanto.nivelo
+                        laUzanto.mono += laUzanto.nivelo
                         domo.save()
                         if domo.sano <= 0:
-                            domo.delete()
+                            domo.delete_instance()
                 elif uzanto != '':
                     if uzanto.uid != chat_id:
                         uzanto.sano -= laUzanto.nivelo
                         laUzanto.nivelo += 1
-                        laUzanto.sano += int(laUzanto.nivelo * 1.71828)
+                        laUzanto.sano += int(laUzanto.nivelo * 1.1)
                         laUzanto.mono += laUzanto.nivelo
                         uzanto.save()
                         if uzanto.sano <= 0:
-                            r = rekomenci(chat_id)
-                            bot.sendMessage(chat_id, u'Vi mortis!\n' + r)
+                            r = rekomenci(uzanto.uid)
+                            mapo = Tutmapi(uzanto.uid) 
+                            bot.sendMessage(uzanto.uid, u'Vi mortis!\n' + r, reply_markup={'keyboard':mapo})
                 laUzanto.save()
         except Exception as e:
             print e
-        
-    uzantoX, uzantoY = poz(chat_id)
-    mapo = [mapi((str(uzantoX-1), str(uzantoY-1), 0), (str(uzantoX), str(uzantoY-1), 1), (str(uzantoX+1), str(uzantoY-1), 2)),
-            mapi((str(uzantoX-1), str(uzantoY)  , 0), (str(uzantoX), str(uzantoY),   1), (str(uzantoX+1), str(uzantoY)  , 2)),
-            mapi((str(uzantoX-1), str(uzantoY+1), 0), (str(uzantoX), str(uzantoY+1), 1), (str(uzantoX+1), str(uzantoY+1), 2))]
-
+    
+    mapo = Tutmapi(chat_id)
     bot.sendMessage(chat_id, u'...', reply_markup={'keyboard':mapo})
 
 
