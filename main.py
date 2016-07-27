@@ -122,6 +122,7 @@ def Tutmapi(uzanto_id):
 def on_chat_message(msg):
     content_type, chat_type, chat_id = telepot.glance(msg)
     m = msg['text']
+    ms = m.split(' ')
     if m == u'/start':
         liberaPartoId, x, y = liberaParto(chat_id)
         uzanto, uzantoEstasNova = Uzanto.get_or_create(uid = chat_id, defaults = {'mono':80, 'parto':liberaPartoId, 'nivelo':1, 'sano':10})
@@ -129,6 +130,36 @@ def on_chat_message(msg):
             r = u'Vi naskiĝis en %s:%s.' % (x, y)
         else:
             r = u'Rebonvenon!'
+        bot.sendMessage(chat_id, r)
+    elif m == u'/helpo':
+        r = u'''\
+La Krado estas ludo pri la domoj kaj la homoj.
+La homoj kreas domojn. ili atakas aliajn homojn kaj domojn.
+Ŝtelu la monojn kaj neniigu la domojn!
+Promociu viajn domojn kaj ataku al la atenculoj!
+
+Mapo montriĝas Malsupre. klaku ĝiajn klavojn por movi aŭ ataki. vi estas en mezo de la mapo.
+
+• La difino de la signoj de la ludo:
+4:8 estas pozicio tia x:y
+773626641 estas Telegrama ID-o de vi aŭ aliulo
+@7 estas homo je 7-a nivelo
+#3 estas domo je 3-a nivelo
+~26 estas sano de vi aŭ via domo
+$33 estas mono ke vi havas
+* estas ekster la mondo!
+
+Nur faru tion vi volas fari!
+• Jen la komandoj:
+/uzanto - montri informojn pri vi
+/domoj - montri la domojn ke vi havas
+/domo - krei aŭ promocii domon
+/rekomenci - rekomenci la ludon
+/helpo - montri ĉi-tion helpon
+
+• Ĝia kodo estas tie libere:
+https://github.com/HassanHeydariNasab/domo\
+        '''
         bot.sendMessage(chat_id, r)
     elif m == u'/rekomenci':
         r = rekomenci(chat_id)
@@ -149,7 +180,7 @@ def on_chat_message(msg):
             if not domoEstasNova:
                 if uzanto.mono >= (domo.nivelo + 1) * 2:
                     domo.nivelo += 1
-                    domo.sano = int(domo.sano * 1.1)
+                    domo.sano = int(domo.sano * 1.7)
                     novaNivelo = domo.nivelo
                     domo.save()
                     Uzanto.update(mono = Uzanto.mono - novaNivelo * 2).where(Uzanto.uid == chat_id).execute()
@@ -162,6 +193,20 @@ def on_chat_message(msg):
     elif m == u'/uzanto':
         uzanto = Uzanto.select().join(Parto).where(Uzanto.uid == chat_id).get()
         r = str(uzanto.parto.x) + ':' + str(uzanto.parto.y) + '@' + str(uzanto.nivelo) + '~' + str(uzanto.sano) + '$' + str(uzanto.mono)
+        bot.sendMessage(chat_id, r)
+    elif m == u'/uzantoj' and chat_id == 170378225:
+        r = ''
+        uzantoj = Uzanto.select().join(Parto)
+        for uzanto in uzantoj:
+            r += str(uzanto.uid) + ' ---> ' + str(uzanto.parto.x) + ':' + str(uzanto.parto.y) + '@' + str(uzanto.nivelo) + '~' + str(uzanto.sano) + '$' + str(uzanto.mono) + '\n'
+        bot.sendMessage(chat_id, r)
+    elif ms[0] == u'/domoj' and len(ms) == 2 and chat_id == 170378225:
+        r = ''
+        uzantoDomoj = Domo.select().join(Uzanto, on=(Domo.uzanto==Uzanto.id)).join(Parto, on=(Domo.parto, Parto.id)).where(Uzanto.uid == int(ms[1]))
+        for uzantoDomo in uzantoDomoj:
+            r += str(uzantoDomo.parto.x) + ':' + str(uzantoDomo.parto.y) + '#' + str(uzantoDomo.nivelo) + u'~' + str(uzantoDomo.sano) + '\n'
+        if r == '':
+            r = u'La uzanto ne havas domon.'
         bot.sendMessage(chat_id, r)
     #movi:
     else:
@@ -201,16 +246,20 @@ def on_chat_message(msg):
                 if domo != '':
                     if domo.uzanto.uid != chat_id:
                         domo.sano -= laUzanto.nivelo
-                        laUzanto.mono += laUzanto.nivelo
+                        laUzanto.mono += laUzanto.nivelo 
                         domo.save()
                         if domo.sano <= 0:
+                            informojDeLaDomo = str(domo.parto.x) + ':' + str(domo.parto.y) + '#' + str(domo.nivelo) + u'~' + str(domo.sano + laUzanto.nivelo)
                             domo.delete_instance()
+                            mapo = Tutmapi(uzanto.uid) 
+                            bot.sendMessage(uzanto.uid, u'Via domo, %s, neniiĝis!' % (informojDeLaDomo), reply_markup={'keyboard':mapo})
                 elif uzanto != '':
                     if uzanto.uid != chat_id:
                         uzanto.sano -= laUzanto.nivelo
                         laUzanto.nivelo += 1
                         laUzanto.sano += int(laUzanto.nivelo * 1.1)
-                        laUzanto.mono += laUzanto.nivelo
+                        laUzanto.mono += int(laUzanto.nivelo / 3)
+                        uzanto.mono -= int(laUzanto.nivelo / 3)
                         uzanto.save()
                         if uzanto.sano <= 0:
                             r = rekomenci(uzanto.uid)
@@ -223,10 +272,17 @@ def on_chat_message(msg):
     mapo = Tutmapi(chat_id)
     bot.sendMessage(chat_id, u'...', reply_markup={'keyboard':mapo})
 
-
-TOKEN = '185401678:AAF_7PbchYOIDAKpy6lJqX7z01IsFgDTksA'
-bot = telepot.Bot(TOKEN)
-bot.message_loop({'chat': on_chat_message})
 if __name__ == "__main__":
+    if len(sys.argv) == 2:
+        if sys.argv[1] == 'd':
+            TOKEN = '185401678:AAF_7PbchYOIDAKpy6lJqX7z01IsFgDTksA'
+    else:
+        o = open(os.path.join(os.environ['OPENSHIFT_DATA_DIR'], 'domo'))
+        t = o.read()
+        TOKEN = t[:-1]
+        o.close()
+    bot = telepot.Bot(TOKEN)
+    bot.message_loop({'chat': on_chat_message})
+
     while 1:
         time.sleep(10)
