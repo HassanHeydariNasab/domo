@@ -245,26 +245,33 @@ https://github.com/HassanHeydariNasab/domo\
                         laUzanto.parto = partoId
                 if domo != '':
                     if domo.uzanto.uid != chat_id:
+                        informojPriLaDomo = str(domo.parto.x) + ':' + str(domo.parto.y) + '#' + str(domo.nivelo) + u'~' + str(domo.sano)
                         domo.sano -= laUzanto.nivelo
-                        laUzanto.mono += laUzanto.nivelo 
+                        laUzanto.mono += laUzanto.nivelo
                         domo.save()
                         if domo.sano <= 0:
-                            informojDeLaDomo = str(domo.parto.x) + ':' + str(domo.parto.y) + '#' + str(domo.nivelo) + u'~' + str(domo.sano + laUzanto.nivelo)
                             domo.delete_instance()
-                            mapo = Tutmapi(uzanto.uid) 
-                            bot.sendMessage(uzanto.uid, u'Via domo, %s, neniiĝis!' % (informojDeLaDomo), reply_markup={'keyboard':mapo})
+                            mapo = Tutmapi(uzanto.uid)
+                            bot.sendMessage(uzanto.uid, u'Via domo, %s, neniiĝis!' % (informojPriLaDomo), reply_markup={'keyboard':mapo})
+                        else:
+                            informojPriLaDomo = str(domo.parto.x) + ':' + str(domo.parto.y) + '#' + str(domo.nivelo) + u'~' + str(domo.sano)
+                            bot.sendMessage(chat_id, informojPriLaDomo)
                 elif uzanto != '':
                     if uzanto.uid != chat_id:
+                        informojPriLaUzanto = str(uzanto.parto.x) + ':' + str(uzanto.parto.y) + '@' + str(uzanto.nivelo) + '~' + str(uzanto.sano) + '$' + str(uzanto.mono)
                         uzanto.sano -= laUzanto.nivelo
-                        laUzanto.nivelo += 1
-                        laUzanto.sano += int(laUzanto.nivelo * 1.1)
+                        laUzanto.sano += int(laUzanto.nivelo * 1.3)
                         laUzanto.mono += int(laUzanto.nivelo / 3)
                         uzanto.mono -= int(laUzanto.nivelo / 3)
+                        laUzanto.nivelo += 1
                         uzanto.save()
                         if uzanto.sano <= 0:
                             r = rekomenci(uzanto.uid)
-                            mapo = Tutmapi(uzanto.uid) 
-                            bot.sendMessage(uzanto.uid, u'Vi mortis!\n' + r, reply_markup={'keyboard':mapo})
+                            mapo = Tutmapi(uzanto.uid)
+                            bot.sendMessage(uzanto.uid, u'Vi, %s, mortis!\n' % (informojPriLaUzanto) + r, reply_markup={'keyboard':mapo})
+                        else:
+                            informojPriLaUzanto = str(uzanto.parto.x) + ':' + str(uzanto.parto.y) + '@' + str(uzanto.nivelo) + '~' + str(uzanto.sano)
+                            bot.sendMessage(chat_id, informojPriLaUzanto)
                 laUzanto.save()
         except Exception as e:
             print e
