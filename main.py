@@ -107,7 +107,7 @@ def rekomenci(uzanto_id):
     uzanto.mono = 80
     uzanto.parto, x, y = liberaParto(uzanto_id)
     uzanto.nivelo = 1
-    uzanto.sano = 10
+    uzanto.sano = 60
     Domo.delete().where(Domo.uzanto == uzanto).execute()
     uzanto.save()
     return u'Vi renaskiĝis en %s:%s.' % (x, y)
@@ -122,10 +122,10 @@ def Tutmapi(uzanto_id):
 def on_chat_message(msg):
     content_type, chat_type, chat_id = telepot.glance(msg)
     m = msg['text']
-    ms = m.split(' ')
+    ms = m.split('@')
     if m == u'/start':
         liberaPartoId, x, y = liberaParto(chat_id)
-        uzanto, uzantoEstasNova = Uzanto.get_or_create(uid = chat_id, defaults = {'mono':80, 'parto':liberaPartoId, 'nivelo':1, 'sano':10})
+        uzanto, uzantoEstasNova = Uzanto.get_or_create(uid = chat_id, defaults = {'mono':80, 'parto':liberaPartoId, 'nivelo':1, 'sano':60})
         if uzantoEstasNova:
             r = u'Vi naskiĝis en %s:%s.' % (x, y)
         else:
@@ -176,7 +176,7 @@ https://github.com/HassanHeydariNasab/domo\
         uzanto = Uzanto.get(Uzanto.uid == chat_id)
         if uzanto.mono >= 2:
             uzantoParto = Parto.select().join(Uzanto).where(Uzanto.uid == chat_id).get()
-            domo, domoEstasNova = Domo.get_or_create(uzanto = uzanto, parto = uzantoParto, defaults = {'sano': 10, 'nivelo': 1})
+            domo, domoEstasNova = Domo.get_or_create(uzanto = uzanto, parto = uzantoParto, defaults = {'sano': 30, 'nivelo': 1})
             if not domoEstasNova:
                 if uzanto.mono >= (domo.nivelo + 1) * 2:
                     domo.nivelo += 1
@@ -197,17 +197,30 @@ https://github.com/HassanHeydariNasab/domo\
     elif m == u'/uzantoj' and chat_id == 170378225:
         r = ''
         uzantoj = Uzanto.select().join(Parto)
+        r += str(uzantoj.count()) + ' uzantoj.\n'
         for uzanto in uzantoj:
-            r += str(uzanto.uid) + ' ---> ' + str(uzanto.parto.x) + ':' + str(uzanto.parto.y) + '@' + str(uzanto.nivelo) + '~' + str(uzanto.sano) + '$' + str(uzanto.mono) + '\n'
+            domoj = Domo.select().join(Uzanto).where(Uzanto.id == uzanto.id).count()
+            r += str(uzanto.parto.x) + ':' + str(uzanto.parto.y) + '@' + str(uzanto.nivelo) + '~' + str(uzanto.sano) + '$' + str(uzanto.mono) + ' --- ' + str(domoj) + '# ' + '/domoj@' + str(uzanto.uid) + ' --- /uzanto@' + str(uzanto.uid) + '\n'
         bot.sendMessage(chat_id, r)
-    elif ms[0] == u'/domoj' and len(ms) == 2 and chat_id == 170378225:
-        r = ''
-        uzantoDomoj = Domo.select().join(Uzanto, on=(Domo.uzanto==Uzanto.id)).join(Parto, on=(Domo.parto, Parto.id)).where(Uzanto.uid == int(ms[1]))
-        for uzantoDomo in uzantoDomoj:
-            r += str(uzantoDomo.parto.x) + ':' + str(uzantoDomo.parto.y) + '#' + str(uzantoDomo.nivelo) + u'~' + str(uzantoDomo.sano) + '\n'
-        if r == '':
-            r = u'La uzanto ne havas domon.'
-        bot.sendMessage(chat_id, r)
+    elif len(ms) == 2  and chat_id == 170378225:
+        if ms[0] == u'/domoj':
+            r = ''
+            uzantoDomoj = Domo.select().join(Uzanto, on=(Domo.uzanto==Uzanto.id)).join(Parto, on=(Domo.parto, Parto.id)).where(Uzanto.uid == int(ms[1]))
+            for uzantoDomo in uzantoDomoj:
+                r += str(uzantoDomo.parto.x) + ':' + str(uzantoDomo.parto.y) + '#' + str(uzantoDomo.nivelo) + u'~' + str(uzantoDomo.sano) + '\n'
+            if r == '':
+                r = u'La uzanto ne havas domon.'
+            bot.sendMessage(chat_id, r)
+        elif ms[0] == u'/uzanto':
+             babilo = bot.getChat(int(ms[1]))
+             r = ''
+             try:
+                 r += '@' + babilo['username']
+                 r += '  ' + babilo['first_name']
+                 r += ' ' + babilo['last_name']
+             except:
+                 pass
+             bot.sendMessage(chat_id, r)
     #movi:
     else:
         try:
