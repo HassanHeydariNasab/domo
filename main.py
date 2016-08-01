@@ -10,6 +10,7 @@ import os
 import time
 import telepot
 from peewee import *
+import gettext
 
 if 'OPENSHIFT_DATA_DIR' in os.environ:
     db = SqliteDatabase(os.environ['OPENSHIFT_DATA_DIR']+'datumaro.db')
@@ -23,6 +24,7 @@ class Parto(Model):
         database = db
 class Uzanto(Model):
     uid = IntegerField()
+    lingvo = CharField(default='eo')
     parto = ForeignKeyField(Parto)
     mono = IntegerField()
     sano = IntegerField()
@@ -38,6 +40,19 @@ class Domo(Model):
         database = db
 #db.connect()
 #db.create_tables([Uzanto, Parto, Domo])
+
+def traduki(uzanto_id):
+    locale = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'locale')
+    gettext.install('uzanta', locale, unicode=True)
+    try:
+        lingvo = Uzanto.get(Uzanto.uid == uzanto_id).lingvo
+        traduko = gettext.translation('uzanta', locale, languages=[lingvo])
+        global _
+        _ = traduko.ugettext
+        traduko.install()
+    except:
+        pass
+#print _(u'nur por testado celoj.')
 
 def kreiUrbon(x, y):
     for i in range(0, x):
@@ -103,6 +118,7 @@ def mapi(i0, i1, i2):
     return mapoVico
 
 def rekomenci(uzanto_id):
+    traduki(uzanto_id)
     uzanto = Uzanto.get(Uzanto.uid == uzanto_id)
     uzanto.mono = 80
     uzanto.parto, x, y = liberaParto(uzanto_id)
@@ -110,7 +126,7 @@ def rekomenci(uzanto_id):
     uzanto.sano = 60
     Domo.delete().where(Domo.uzanto == uzanto).execute()
     uzanto.save()
-    return u'Vi renaskiĝis en %s:%s.' % (x, y)
+    return _(u'Vi renaskiĝis en %(poz)s.') % {'poz':str(x)+':'+str(y)}
 
 def Tutmapi(uzanto_id):
     uzantoX, uzantoY = poz(uzanto_id)
@@ -123,16 +139,51 @@ def on_chat_message(msg):
     content_type, chat_type, chat_id = telepot.glance(msg)
     m = msg['text']
     ms = m.split('@')
+    mss = m.split(' ')
+    mapota = True
+    '''
+    locale = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'locale')
+    gettext.install('uzanta', locale, unicode=True)
+    try:
+        lingvo = Uzanto.get(Uzanto.uid == chat_id).lingvo
+        traduko = gettext.translation('uzanta', locale, languages=[lingvo])
+        #global _
+        _ = traduko.ugettext
+        traduko.install()
+    except:
+        pass
+    '''
+    traduki(chat_id)
     if m == u'/start':
         liberaPartoId, x, y = liberaParto(chat_id)
         uzanto, uzantoEstasNova = Uzanto.get_or_create(uid = chat_id, defaults = {'mono':80, 'parto':liberaPartoId, 'nivelo':1, 'sano':60})
         if uzantoEstasNova:
-            r = u'Vi naskiĝis en %s:%s.' % (x, y)
+            r = u'Elektu lingvon:\nSelect a language:\nزبانی را برگزینید:'
+            lingvoj = [['/lingvo eo'], ['/lingvo en'], ['/lingvo fa']]
+            bot.sendMessage(chat_id, r, reply_markup={'keyboard':lingvoj})
+            mapota = False
         else:
-            r = u'Rebonvenon!'
-        bot.sendMessage(chat_id, r)
+            r = _(u'Rebonvenon!')
+            bot.sendMessage(chat_id, r)
+    elif len(mss) == 2 and m[:7] == '/lingvo':
+        if mss[1] == 'eo':
+            lingvo = 'eo'
+        elif mss[1] == 'en':
+            lingvo = 'en_US'
+        elif mss[1] == 'fa':
+            lingvo = 'fa'
+        else:
+            lingvo = 'eo'
+        Uzanto.update(lingvo = lingvo).where(Uzanto.uid == chat_id).execute()
+        traduki(chat_id)
+        mapo = Tutmapi(chat_id)
+        x, y = poz(chat_id)
+        r = _(u'La lingvo ŝanĝis.\nVi estas en %(poz)s') % {u'poz': str(x)+':'+str(y)}
+        bot.sendMessage(chat_id, r, reply_markup={'keyboard':mapo})
+        mapota = False
+
     elif m == u'/helpo':
-        r = u'''\
+        r = _(u'''\
 La Krado estas ludo pri la domoj kaj la homoj.
 La homoj kreas domojn. ili atakas aliajn homojn kaj domojn.
 Ŝtelu la monojn kaj neniigu la domojn!
@@ -159,7 +210,7 @@ Nur faru tion vi volas fari!
 
 • Ĝia kodo estas tie libere:
 https://github.com/HassanHeydariNasab/domo\
-        '''
+        ''')
         bot.sendMessage(chat_id, r)
     elif m == u'/rekomenci':
         r = rekomenci(chat_id)
@@ -170,7 +221,7 @@ https://github.com/HassanHeydariNasab/domo\
         for uzantoDomo in uzantoDomoj:
             r += str(uzantoDomo.parto.x) + ':' + str(uzantoDomo.parto.y) + '#' + str(uzantoDomo.nivelo) + u'~' + str(uzantoDomo.sano) + '\n'
         if r == '':
-            r = u'Vi ne havas domon.'
+            r = _(u'Vi ne havas domon.')
         bot.sendMessage(chat_id, r)
     elif m == u'/domo':
         uzanto = Uzanto.get(Uzanto.uid == chat_id)
@@ -185,11 +236,11 @@ https://github.com/HassanHeydariNasab/domo\
                     domo.save()
                     Uzanto.update(mono = Uzanto.mono - novaNivelo * 2).where(Uzanto.uid == chat_id).execute()
                 else:
-                    bot.sendMessage(chat_id, u'Vi bezonas monon pli ol (la nivelo de domo) * 2') 
+                    bot.sendMessage(chat_id, _(u'Por atingi domon je la nivelo de %(nivelo)s, vi devas havi %(mono)d monon.') % {'nivelo': domo.nivelo + 1, 'mono': (domo.nivelo + 1) * 2})
             else:
                 Uzanto.update(mono = Uzanto.mono - 2).where(Uzanto.uid == chat_id).execute()
         else:
-            bot.sendMessage(chat_id, u'Vi bezonas monon pli ol (la nivelo de domo) * 2')
+            bot.sendMessage(chat_id, _(u'Vi bezonas almenaŭ 2 monon por fari domon.'))
     elif m == u'/uzanto':
         uzanto = Uzanto.select().join(Parto).where(Uzanto.uid == chat_id).get()
         r = str(uzanto.parto.x) + ':' + str(uzanto.parto.y) + '@' + str(uzanto.nivelo) + '~' + str(uzanto.sano) + '$' + str(uzanto.mono)
@@ -209,7 +260,7 @@ https://github.com/HassanHeydariNasab/domo\
             for uzantoDomo in uzantoDomoj:
                 r += str(uzantoDomo.parto.x) + ':' + str(uzantoDomo.parto.y) + '#' + str(uzantoDomo.nivelo) + u'~' + str(uzantoDomo.sano) + '\n'
             if r == '':
-                r = u'La uzanto ne havas domon.'
+                r = _(u'La uzanto ne havas domon.')
             bot.sendMessage(chat_id, r)
         elif ms[0] == u'/uzanto':
              babilo = bot.getChat(int(ms[1]))
@@ -265,7 +316,7 @@ https://github.com/HassanHeydariNasab/domo\
                         if domo.sano <= 0:
                             domo.delete_instance()
                             mapo = Tutmapi(uzanto.uid)
-                            bot.sendMessage(uzanto.uid, u'Via domo, %s, neniiĝis!' % (informojPriLaDomo), reply_markup={'keyboard':mapo})
+                            bot.sendMessage(uzanto.uid, _(u'Via domo, %(domo)s, neniiĝis!') % {'domo':informojPriLaDomo}, reply_markup={'keyboard':mapo})
                         else:
                             informojPriLaDomo = str(domo.parto.x) + ':' + str(domo.parto.y) + '#' + str(domo.nivelo) + u'~' + str(domo.sano)
                             bot.sendMessage(chat_id, informojPriLaDomo)
@@ -281,16 +332,16 @@ https://github.com/HassanHeydariNasab/domo\
                         if uzanto.sano <= 0:
                             r = rekomenci(uzanto.uid)
                             mapo = Tutmapi(uzanto.uid)
-                            bot.sendMessage(uzanto.uid, u'Vi, %s, mortis!\n' % (informojPriLaUzanto) + r, reply_markup={'keyboard':mapo})
+                            bot.sendMessage(uzanto.uid, _(u'Vi, %(uzanto)s, mortis!\n') % {'uzanto':informojPriLaUzanto} + r, reply_markup={'keyboard':mapo})
                         else:
                             informojPriLaUzanto = str(uzanto.parto.x) + ':' + str(uzanto.parto.y) + '@' + str(uzanto.nivelo) + '~' + str(uzanto.sano)
                             bot.sendMessage(chat_id, informojPriLaUzanto)
                 laUzanto.save()
         except Exception as e:
             print e
-    
-    mapo = Tutmapi(chat_id)
-    bot.sendMessage(chat_id, u'...', reply_markup={'keyboard':mapo})
+    if mapota:
+        mapo = Tutmapi(chat_id)
+        bot.sendMessage(chat_id, u'...', reply_markup={'keyboard':mapo})
 
 if __name__ == "__main__":
     if len(sys.argv) == 2:

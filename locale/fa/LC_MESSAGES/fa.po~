@@ -1,0 +1,67 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: hsn 6\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-08-01 21:33+0430\n"
+"PO-Revision-Date: 2016-08-01 11:25+0430\n"
+"Last-Translator: hsn6 <hsn6@openmailbox.org>\n"
+"Language-Team: English\n"
+"Language: fa\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: main.py:129 main.py:219
+#, python-format
+msgid "Vi renaskiĝis en %(poz)s."
+msgstr "شما در %(poz)s دوباره متولد شدید."
+
+#: main.py:166
+msgid "Rebonvenon!"
+msgstr "دوباره خوش‌آمدید!"
+
+#: main.py:181
+#, python-format
+msgid ""
+"La lingvo ŝanĝis.\n"
+"Vi estas en %(poz)s"
+msgstr ""
+"زبان تغییر کرد.\n"
+"شما در %(poz)s هستید"
+
+#: main.py:225
+msgid "Vi ne havas domon."
+msgstr "هیچ خانه‌ای ندارید."
+
+#: main.py:240
+#, python-format
+msgid ""
+"Por atingi domon je la nivelo de %(nivelo)s, vi devas havi %(mono)d monon."
+msgstr "برای رساندن خانه به سطح %(nivelo)s، شما باید %(mono)d پول داشته باشید."
+
+#: main.py:244
+msgid "Vi bezonas almenaŭ 2 monon por fari domon."
+msgstr "شما دست کم به ۲ پول برای ساختن خانه نیاز دارید."
+
+#: main.py:264
+msgid "La uzanto ne havas domon."
+msgstr "کاربر هیچ خانه‌ای ندارد."
+
+#: main.py:320
+#, python-format
+msgid "Via domo, %(domo)s, neniiĝis!"
+msgstr "خانهٔ شما، %(domo)s، نابود شد!"
+
+#: main.py:336
+#, python-format
+msgid "Vi, %(uzanto)s, mortis!\n"
+msgstr "شما، %(uzanto)s، مُردید!\n"
+
+#~ msgid "nur por testado celoj."
+#~ msgstr "تنها برای آزمودن."
