@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hsn 6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-08-01 21:39+0430\n"
+"POT-Creation-Date: 2016-08-02 10:29+0430\n"
 "PO-Revision-Date: 2016-08-01 11:25+0430\n"
 "Last-Translator: hsn6 <hsn6@openmailbox.org>\n"
 "Language-Team: English\n"
@@ -22,11 +22,11 @@ msgstr ""
 msgid "Vi renaskiĝis en %(poz)s."
 msgstr "شما در %(poz)s دوباره متولد شدید."
 
-#: main.py:166
+#: main.py:154
 msgid "Rebonvenon!"
 msgstr "دوباره خوش‌آمدید!"
 
-#: main.py:181
+#: main.py:169
 #, python-format
 msgid ""
 "La lingvo ŝanĝis.\n"
@@ -35,9 +35,9 @@ msgstr ""
 "زبان تغییر کرد.\n"
 "شما در %(poz)s هستید"
 
-#: main.py:186
+#: main.py:174
 msgid ""
-"La Krado estas ludo pri la domoj kaj la homoj.\n"
+"Krado estas ludo pri la domoj kaj la homoj.\n"
 "La homoj kreas domojn. ili atakas aliajn homojn kaj domojn.\n"
 "Ŝtelu la monojn kaj neniigu la domojn!\n"
 "Promociu viajn domojn kaj ataku al la atenculoj!\n"
@@ -69,11 +69,10 @@ msgstr ""
 "انسان‌ها خانه‌ها را می‌سازند. آن‌ها به دیگر انسان‌ها و خانه‌ها حمله می‌کنند.\n"
 "پول‌ها را بدزدید و خانه‌ها را نابود کنید!\n"
 "‌خانه‌های خود را ارتقا دهید و به متجاوزان حمله کنید!\n"
-"نقشه‌ای در پایین نمایش داده می‌شود. برای حرکت کردن یا حمله کردن، بر روی دکمه‌هایش بزنید. شما در "
-"وسط نقشه هستید.\n"
+"نقشه‌ای در پایین نمایش داده می‌شود. برای حرکت کردن یا حمله کردن، بر روی "
+"دکمه‌هایش بزنید. شما در وسط نقشه هستید.\n"
 "\n"
 "• معنی نشانه‌های بازی:\n"
-
 "4:8 مکانی به صورت x:y است.\n"
 "773626641 شمارهٔ هویت تلگرام شما یا دیگران است.\n"
 "@7 انسانی در سطح ۷ است.\n"
@@ -85,30 +84,30 @@ msgstr ""
 "• کدش آزادانه این‌جاست:\n"
 "https://github.com/HassanHeydariNasab/domo        "
 
-#: main.py:224
+#: main.py:212
 msgid "Vi ne havas domon."
 msgstr "هیچ خانه‌ای ندارید."
 
-#: main.py:239
+#: main.py:227
 #, python-format
 msgid ""
 "Por atingi domon je la nivelo de %(nivelo)s, vi devas havi %(mono)d monon."
 msgstr "برای رساندن خانه به سطح %(nivelo)s، شما باید %(mono)d پول داشته باشید."
 
-#: main.py:243
+#: main.py:231
 msgid "Vi bezonas almenaŭ 2 monon por fari domon."
 msgstr "شما دست کم به ۲ پول برای ساختن خانه نیاز دارید."
 
-#: main.py:263
+#: main.py:251
 msgid "La uzanto ne havas domon."
 msgstr "کاربر هیچ خانه‌ای ندارد."
 
-#: main.py:319
+#: main.py:307
 #, python-format
 msgid "Via domo, %(domo)s, neniiĝis!"
 msgstr "خانهٔ شما، %(domo)s، نابود شد!"
 
-#: main.py:335
+#: main.py:323
 #, python-format
 msgid "Vi, %(uzanto)s, mortis!\n"
 msgstr "شما، %(uzanto)s، مُردید!\n"

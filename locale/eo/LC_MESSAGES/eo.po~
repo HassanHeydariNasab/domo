@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hsn 6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-08-01 21:33+0430\n"
+"POT-Creation-Date: 2016-08-02 10:26+0430\n"
 "PO-Revision-Date: 2016-08-01 11:25+0430\n"
 "Last-Translator: hsn6 <hsn6@openmailbox.org>\n"
 "Language-Team: English\n"
@@ -17,46 +17,77 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: main.py:129 main.py:219
+#: main.py:129
 #, python-format
 msgid "Vi renaskiĝis en %(poz)s."
 msgstr ""
 
-#: main.py:166
+#: main.py:154
 msgid "Rebonvenon!"
 msgstr ""
 
-#: main.py:181
+#: main.py:169
 #, python-format
 msgid ""
 "La lingvo ŝanĝis.\n"
 "Vi estas en %(poz)s"
 msgstr ""
 
-#: main.py:225
+#: main.py:174
+msgid ""
+"La Krado estas ludo pri la domoj kaj la homoj.\n"
+"La homoj kreas domojn. ili atakas aliajn homojn kaj domojn.\n"
+"Ŝtelu la monojn kaj neniigu la domojn!\n"
+"Promociu viajn domojn kaj ataku al la atenculoj!\n"
+"\n"
+"Mapo montriĝas Malsupre. klaku ĝiajn klavojn por movi aŭ ataki. vi estas en "
+"mezo de la mapo.\n"
+"\n"
+"• La difino de la signoj de la ludo:\n"
+"4:8 estas pozicio tia x:y\n"
+"773626641 estas Telegrama ID-o de vi aŭ aliulo\n"
+"@7 estas homo je 7-a nivelo\n"
+"#3 estas domo je 3-a nivelo\n"
+"~26 estas sano de vi aŭ via domo\n"
+"$33 estas mono ke vi havas\n"
+"* estas ekster la mondo!\n"
+"\n"
+"Nur faru tion vi volas fari!\n"
+"• Jen la komandoj:\n"
+"/uzanto - montri informojn pri vi\n"
+"/domoj - montri la domojn ke vi havas\n"
+"/domo - krei aŭ promocii domon\n"
+"/rekomenci - rekomenci la ludon\n"
+"/helpo - montri ĉi-tion helpon\n"
+"\n"
+"• Ĝia kodo estas tie libere:\n"
+"https://github.com/HassanHeydariNasab/domo        "
+msgstr ""
+
+#: main.py:212
 msgid "Vi ne havas domon."
 msgstr ""
 
-#: main.py:240
+#: main.py:227
 #, python-format
 msgid ""
 "Por atingi domon je la nivelo de %(nivelo)s, vi devas havi %(mono)d monon."
 msgstr ""
 
-#: main.py:244
+#: main.py:231
 msgid "Vi bezonas almenaŭ 2 monon por fari domon."
 msgstr ""
 
-#: main.py:264
+#: main.py:251
 msgid "La uzanto ne havas domon."
 msgstr ""
 
-#: main.py:320
+#: main.py:307
 #, python-format
 msgid "Via domo, %(domo)s, neniiĝis!"
 msgstr ""
 
-#: main.py:336
+#: main.py:323
 #, python-format
 msgid "Vi, %(uzanto)s, mortis!\n"
 msgstr ""

@@ -141,18 +141,6 @@ def on_chat_message(msg):
     ms = m.split('@')
     mss = m.split(' ')
     mapota = True
-    '''
-    locale = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'locale')
-    gettext.install('uzanta', locale, unicode=True)
-    try:
-        lingvo = Uzanto.get(Uzanto.uid == chat_id).lingvo
-        traduko = gettext.translation('uzanta', locale, languages=[lingvo])
-        #global _
-        _ = traduko.ugettext
-        traduko.install()
-    except:
-        pass
-    '''
     traduki(chat_id)
     if m == u'/start':
         liberaPartoId, x, y = liberaParto(chat_id)
@@ -184,7 +172,7 @@ def on_chat_message(msg):
 
     elif m == u'/helpo':
         r = _(u'''\
-La Krado estas ludo pri la domoj kaj la homoj.
+Krado estas ludo pri la domoj kaj la homoj.
 La homoj kreas domojn. ili atakas aliajn homojn kaj domojn.
 Ŝtelu la monojn kaj neniigu la domojn!
 Promociu viajn domojn kaj ataku al la atenculoj!
@@ -253,7 +241,7 @@ https://github.com/HassanHeydariNasab/domo\
             domoj = Domo.select().join(Uzanto).where(Uzanto.id == uzanto.id).count()
             r += str(uzanto.parto.x) + ':' + str(uzanto.parto.y) + '@' + str(uzanto.nivelo) + '~' + str(uzanto.sano) + '$' + str(uzanto.mono) + ' --- ' + str(domoj) + '# ' + '/domoj@' + str(uzanto.uid) + ' --- /uzanto@' + str(uzanto.uid) + '\n'
         bot.sendMessage(chat_id, r)
-    elif len(ms) == 2  and chat_id == 170378225:
+    elif len(ms) == 2 and (ms[0] == '/domoj' or ms[0] == '/uzanto') and chat_id == 170378225:
         if ms[0] == u'/domoj':
             r = ''
             uzantoDomoj = Domo.select().join(Uzanto, on=(Domo.uzanto==Uzanto.id)).join(Parto, on=(Domo.parto, Parto.id)).where(Uzanto.uid == int(ms[1]))

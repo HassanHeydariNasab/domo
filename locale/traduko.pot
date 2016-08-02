@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-08-01 21:56+0430\n"
+"POT-Creation-Date: 2016-08-02 10:32+0430\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,20 +22,20 @@ msgstr ""
 msgid "Vi renaskiĝis en %(poz)s."
 msgstr ""
 
-#: main.py:166
+#: main.py:154
 msgid "Rebonvenon!"
 msgstr ""
 
-#: main.py:181
+#: main.py:169
 #, python-format
 msgid ""
 "La lingvo ŝanĝis.\n"
 "Vi estas en %(poz)s"
 msgstr ""
 
-#: main.py:186
+#: main.py:174
 msgid ""
-"La Krado estas ludo pri la domoj kaj la homoj.\n"
+"Krado estas ludo pri la domoj kaj la homoj.\n"
 "La homoj kreas domojn. ili atakas aliajn homojn kaj domojn.\n"
 "Ŝtelu la monojn kaj neniigu la domojn!\n"
 "Promociu viajn domojn kaj ataku al la atenculoj!\n"
@@ -64,30 +64,30 @@ msgid ""
 "https://github.com/HassanHeydariNasab/domo        "
 msgstr ""
 
-#: main.py:224
+#: main.py:212
 msgid "Vi ne havas domon."
 msgstr ""
 
-#: main.py:239
+#: main.py:227
 #, python-format
 msgid ""
 "Por atingi domon je la nivelo de %(nivelo)s, vi devas havi %(mono)d monon."
 msgstr ""
 
-#: main.py:243
+#: main.py:231
 msgid "Vi bezonas almenaŭ 2 monon por fari domon."
 msgstr ""
 
-#: main.py:263
+#: main.py:251
 msgid "La uzanto ne havas domon."
 msgstr ""
 
-#: main.py:319
+#: main.py:307
 #, python-format
 msgid "Via domo, %(domo)s, neniiĝis!"
 msgstr ""
 
-#: main.py:335
+#: main.py:323
 #, python-format
 msgid "Vi, %(uzanto)s, mortis!\n"
 msgstr ""
