@@ -147,18 +147,18 @@ def on_chat_message(msg):
         uzanto, uzantoEstasNova = Uzanto.get_or_create(uid = chat_id, defaults = {'mono':80, 'parto':liberaPartoId, 'nivelo':1, 'sano':60})
         if uzantoEstasNova:
             r = u'Elektu lingvon:\nSelect a language:\nزبانی را برگزینید:'
-            lingvoj = [['/lingvo eo'], ['/lingvo en'], ['/lingvo fa']]
+            lingvoj = [['/lingvo Esperanto'], ['/lingvo English'], ['/lingvo فارسی']]
             bot.sendMessage(chat_id, r, reply_markup={'keyboard':lingvoj})
             mapota = False
         else:
             r = _(u'Rebonvenon!')
             bot.sendMessage(chat_id, r)
     elif len(mss) == 2 and m[:7] == '/lingvo':
-        if mss[1] == 'eo':
+        if mss[1] == 'eo' or mss[1] == 'Esperanto' or mss[1] == 'esperanto':
             lingvo = 'eo'
-        elif mss[1] == 'en':
+        elif mss[1] == 'en' or mss[1] == 'English' or mss[1] == 'english':
             lingvo = 'en_US'
-        elif mss[1] == 'fa':
+        elif mss[1] == 'fa' or mss[1] == 'فارسی' or mss[1] == 'farsi' or mss[1] == 'Farsi' or mss[1] == 'Persian' or mss[1] == 'persian':
             lingvo = 'fa'
         else:
             lingvo = 'eo'
@@ -241,7 +241,7 @@ https://github.com/HassanHeydariNasab/domo\
             domoj = Domo.select().join(Uzanto).where(Uzanto.id == uzanto.id).count()
             r += str(uzanto.parto.x) + ':' + str(uzanto.parto.y) + '@' + str(uzanto.nivelo) + '~' + str(uzanto.sano) + '$' + str(uzanto.mono) + ' --- ' + str(domoj) + '# ' + '/domoj@' + str(uzanto.uid) + ' --- /uzanto@' + str(uzanto.uid) + '\n'
         bot.sendMessage(chat_id, r)
-    elif len(ms) == 2 and (ms[0] == '/domoj' or ms[0] == '/uzanto') and chat_id == 170378225:
+    elif len(ms) == 2 and (ms[0] == '/domoj' or ms[0] == '/uzanto' or ms[0] == '/forigi') and chat_id == 170378225:
         if ms[0] == u'/domoj':
             r = ''
             uzantoDomoj = Domo.select().join(Uzanto, on=(Domo.uzanto==Uzanto.id)).join(Parto, on=(Domo.parto, Parto.id)).where(Uzanto.uid == int(ms[1]))
@@ -260,6 +260,14 @@ https://github.com/HassanHeydariNasab/domo\
              except:
                  pass
              bot.sendMessage(chat_id, r)
+        elif ms[0] == u'/forigi':
+            try:
+                uzanto = Uzanto.get(Uzanto.uid == int(ms[1]))
+                Domo.delete().where(Domo.uzanto == uzanto).execute()
+                Uzanto.delete().where(Uzanto.uid == int(ms[1])).execute()
+                bot.sendMessage(chat_id, _(u'La uzanto kaj liaj domoj foriĝis.'))
+            except Exception as e:
+                print e
     #movi:
     else:
         try:

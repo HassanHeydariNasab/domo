@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hsn 6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-08-02 10:29+0430\n"
+"POT-Creation-Date: 2016-08-02 11:11+0430\n"
 "PO-Revision-Date: 2016-08-01 11:25+0430\n"
 "Last-Translator: hsn6 <hsn6@openmailbox.org>\n"
 "Language-Team: English\n"
@@ -112,12 +112,16 @@ msgstr "You need at least 2 money for building a house."
 msgid "La uzanto ne havas domon."
 msgstr "The user hasn't any house."
 
-#: main.py:307
+#: main.py:268
+msgid "La uzanto kaj liaj domoj foriĝis."
+msgstr "The user and his houses deleted."
+
+#: main.py:315
 #, python-format
 msgid "Via domo, %(domo)s, neniiĝis!"
 msgstr "Your house, %(domo)s, destroyed!"
 
-#: main.py:323
+#: main.py:331
 #, python-format
 msgid "Vi, %(uzanto)s, mortis!\n"
 msgstr "You, %(uzanto)s, died!\n"
