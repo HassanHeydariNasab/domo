@@ -11,6 +11,7 @@ import time
 import telepot
 from peewee import *
 import gettext
+from math import log
 
 if 'OPENSHIFT_DATA_DIR' in os.environ:
     db = SqliteDatabase(os.environ['OPENSHIFT_DATA_DIR']+'datumaro.db')
@@ -219,7 +220,7 @@ https://github.com/HassanHeydariNasab/domo\
             if not domoEstasNova:
                 if uzanto.mono >= (domo.nivelo + 1) * 2:
                     domo.nivelo += 1
-                    domo.sano = int(domo.sano * 1.7)
+                    domo.sano = int(domo.sano + log(domo.sano * (domo.nivelo) + 20, 2.718281828459045))
                     novaNivelo = domo.nivelo
                     domo.save()
                     Uzanto.update(mono = Uzanto.mono - novaNivelo * 2).where(Uzanto.uid == chat_id).execute()
@@ -306,8 +307,12 @@ https://github.com/HassanHeydariNasab/domo\
                 if domo != '':
                     if domo.uzanto.uid != chat_id:
                         informojPriLaDomo = str(domo.parto.x) + ':' + str(domo.parto.y) + '#' + str(domo.nivelo) + u'~' + str(domo.sano)
-                        domo.sano -= laUzanto.nivelo
-                        laUzanto.mono += laUzanto.nivelo
+                        if domo.sano >= laUzanto.nivelo:
+                            laUzanto.mono += laUzanto.nivelo
+                            domo.sano -= laUzanto.nivelo
+                        else:
+                            laUzanto.mono += domo.sano
+                            domo.sano = 0
                         domo.save()
                         if domo.sano <= 0:
                             domo.delete_instance()
@@ -320,9 +325,13 @@ https://github.com/HassanHeydariNasab/domo\
                     if uzanto.uid != chat_id:
                         informojPriLaUzanto = str(uzanto.parto.x) + ':' + str(uzanto.parto.y) + '@' + str(uzanto.nivelo) + '~' + str(uzanto.sano) + '$' + str(uzanto.mono)
                         uzanto.sano -= laUzanto.nivelo
-                        laUzanto.sano += int(laUzanto.nivelo * 1.3)
-                        laUzanto.mono += int(laUzanto.nivelo / 3)
-                        uzanto.mono -= int(laUzanto.nivelo / 3)
+                        laUzanto.sano += int(laUzanto.nivelo * 1.142)
+                        if uzanto.mono >= laUzanto.nivelo * 2:
+                            laUzanto.mono += laUzanto.nivelo * 2
+                            uzanto.mono -= laUzanto.nivelo * 2
+                        else:
+                            laUzanto.mono += uzanto.mono
+                            uzanto.mono = 0
                         laUzanto.nivelo += 1
                         uzanto.save()
                         if uzanto.sano <= 0:
